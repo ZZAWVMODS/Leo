@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para mi San Valentín</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --rosa-soft: #ff85a2;
+            --rosa-vibrante: #ff4d79;
+            --morado-glow: #a855f7;
+            --negro-profundo: #0a0a0a;
+            --glow-blanco: rgba(255, 255, 255, 0.8);
+            --glow-rosa: rgba(255, 133, 162, 0.6);
+            --spotify-green: #1DB954;
+            --gold-glow: #ffd700;
+            --grey-dust: rgba(150, 150, 150, 0.4);
+        }
+
+        /* --- RESET Y ELIMINACIÓN DE RESALTADO AZUL --- */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent; 
+            -webkit-touch-callout: none; 
+        }
+
+        body, html {
+            height: 100%; width: 100%;
+            background-color: var(--negro-profundo);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            touch-action: none;
+        }
+
+        .apple-emoji {
+            display: inline-block;
+            width: 1.2em; height: 1.2em;
+            vertical-align: middle;
+            image-rendering: -webkit-optimize-contrast;
+        }
+
+        /* --- AURORAS --- */
+        #aurora-container {
+            position: fixed; inset: 0;
+            z-index: 1; pointer-events: none;
+        }
+        .aurora {
+            position: absolute; width: 100%; height: 40vh;
+            filter: blur(80px); opacity: 0.7;
+            animation: pulseAurora 8s ease-in-out infinite alternate;
+        }
+        .top { top: -10vh; background: linear-gradient(to bottom, var(--rosa-vibrante), transparent); }
+        .bottom { bottom: -10vh; background: linear-gradient(to top, #8a2be2, transparent); }
+
+        @keyframes pulseAurora {
+            0% { transform: scale(1) translateY(0); opacity: 0.5; }
+            100% { transform: scale(1.1) translateY(20px); opacity: 0.8; }
+        }
+
+        /* --- DESTELLOS --- */
+        .sparkle {
+            position: absolute; background: white;
+            border-radius: 50%; pointer-events: none;
+            box-shadow: 0 0 15px 2px white, 0 0 25px 5px var(--rosa-soft);
+            animation: twinkle var(--duration) ease-in-out infinite;
+            z-index: 2;
+        }
+        @keyframes twinkle {
+            0%, 100% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- TITULO EN UNA SOLA LÍNEA --- */
+        .titulo-contenedor {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 3rem;
+            white-space: nowrap; 
+            flex-wrap: nowrap;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .letra {
+            display: inline-block;
+            font-family: 'Dancing Script', cursive; 
+            font-size: clamp(1.4rem, 6.2vw, 4rem); 
+            background: linear-gradient(
+                45deg, #ffffff 20%, var(--morado-glow) 40%, #ffffff 50%, var(--morado-glow) 70%, #ffffff 80%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+            animation: waveGradient 4s linear infinite, softWave 3s ease-in-out infinite;
+            animation-delay: calc(var(--i) * 0.1s);
+        }
+
+        @keyframes softWave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        @keyframes waveGradient { to { background-position: 200% center; } }
+
+        /* --- ELEMENTOS DE RASTRO --- */
+        .heart-trail {
+            position: fixed; width: 22px; height: 22px;
+            pointer-events: none; z-index: 1000;
+            filter: drop-shadow(0 0 8px var(--rosa-soft));
+            animation: fadeOutTrail 0.9s forwards ease-out;
+        }
+        @keyframes fadeOutTrail {
+            0% { transform: scale(1.2) translateY(0); opacity: 1; }
+            100% { transform: scale(0.1) translateY(-50px); opacity: 0; }
+        }
+
+        /* --- PARTICULAS DE POLVO (GRIS / SPOTLIGHT) --- */
+        .dust-particle {
+            position: fixed; 
+            background: var(--grey-dust);
+            border-radius: 50%; 
+            pointer-events: none; 
+            z-index: 26;
+            filter: blur(1px);
+            animation: dustFloat var(--d) ease-in-out forwards;
+        }
+        @keyframes dustFloat {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 0.4; }
+            100% { transform: translateY(-20vh) translateX(var(--rx)) scale(1.5); opacity: 0; }
+        }
+
+        .flower-fall {
+            position: fixed; top: -50px;
+            pointer-events: none; z-index: 3;
+            animation: fall linear forwards;
+        }
+        .flower-img { width: 25px; height: 25px; filter: drop-shadow(0 0 5px rgba(255,183,197,0.5)); }
+
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        /* --- UI PRINCIPAL --- */
+        #main-ui { text-align: center; z-index: 10; opacity: 0; transition: opacity 1s; max-width: 90vw; }
+        .btn-group { display: flex; justify-content: center; gap: clamp(20px, 10vw, 80px); align-items: center; min-height: 120px; }
+        
+        button { 
+            padding: 16px 45px; font-size: 1.2rem; font-weight: 600; 
+            border-radius: 50px; border: none; cursor: pointer;
+            outline: none;
+            -webkit-tap-highlight-color: transparent; 
+        }
+        #si { background: var(--rosa-soft); color: white; box-shadow: 0 0 30px rgba(255,133,162,0.6); }
+        #no { background: #222; color: #fff; position: relative; z-index: 100; border: 1px solid #444; user-select: none; }
+        
+        .after-image {
+            position: fixed; padding: 16px 45px; font-size: 1.2rem; font-weight: 600;
+            border-radius: 50px; background: rgba(255, 77, 121, 0.4);
+            color: transparent; border: 1px solid var(--rosa-soft);
+            pointer-events: none; z-index: 90;
+            animation: vanish 0.3s ease-out forwards;
+        }
+        @keyframes vanish {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        /* --- SPOTIFY STYLE SECTION --- */
+        #spotify-container {
+            display: none; width: 90vw; max-width: 400px;
+            background: linear-gradient(180deg, rgba(37,37,37,0.9) 0%, rgba(18,18,18,1) 100%);
+            border-radius: 15px; padding: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            z-index: 30; flex-direction: column;
+            opacity: 0; transform: scale(0.95); transition: all 1.2s ease;
+            position: relative;
+        }
+        .spot-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .spot-img { width: 65px; height: 65px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
+        .spot-info h4 { color: white; font-size: 1.1rem; }
+        .spot-info p { color: #b3b3b3; font-size: 0.85rem; }
+
+        .lyrics-box {
+            height: 200px; 
+            overflow: hidden;
+            position: relative;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 60%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, black 60%, transparent 100%);
+        }
+        #lyrics-content {
+            display: flex; flex-direction: column;
+            align-items: center; 
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .lyric-line {
+            color: rgba(255,255,255,0.15); font-size: 1.35rem; font-weight: 700;
+            min-height: 50px; 
+            margin-bottom: 10px; transition: all 0.6s ease;
+            filter: blur(2px); text-align: center; width: 100%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .lyric-line.active {
+            color: white; filter: blur(0);
+            text-shadow: 0 0 20px rgba(255,255,255,0.6);
+            transform: scale(1.1);
+        }
+
+        /* --- LIBRO DE POEMA --- */
+        #book-container {
+            display: none;
+            width: 320px;
+            height: 450px;
+            position: relative;
+            perspective: 1500px;
+            z-index: 35;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+        .book {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            background: #fdf6e3;
+            border-radius: 5px 15px 15px 5px;
+            box-shadow: inset 3px 0px 20px rgba(0,0,0,0.2), 10px 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            backface-visibility: hidden;
+            transform-origin: left center;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), z-index 0.1s 0.6s;
+            cursor: pointer;
+        }
+        .page.flipped {
+            transform: rotateY(-160deg);
+            z-index: 0 !important;
+        }
+        .page-content {
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            color: #4a3728;
+            font-size: 1.3rem;
+            line-height: 1.6;
+        }
+        .page-number {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            font-size: 0.8rem;
+            color: #a09080;
+        }
+        .tap-hint {
+            position: absolute;
+            bottom: -40px;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            animation: pulse 2s infinite;
+        }
+
+        /* --- PANTALLA FINAL --- */
+        #final-screen {
+            display: none; position: fixed; inset: 0;
+            z-index: 20; flex-direction: column; align-items: center;
+            justify-content: center; padding: 20px;
+        }
+        
+        #thanks-msg {
+            font-family: 'Dancing Script'; font-size: 3rem; color: var(--rosa-soft); opacity: 0; transition: 1s; margin-bottom: 20px; z-index: 31;
+        }
+
+        #loader {
+            position: fixed; inset: 0; background: var(--negro-profundo);
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 10000; transition: opacity 1s;
+        }
+        .portal-ring {
+            position: absolute; width: 120px; height: 120px;
+            border-radius: 50%; border: 2px solid transparent;
+            border-top: 2px solid var(--rosa-vibrante);
+            border-bottom: 2px solid var(--rosa-soft);
+            box-shadow: 0 0 15px var(--glow-rosa);
+            animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #hint-msg {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; z-index: 100; opacity: 0; transition: 1s;
+        }
+
+        #spotlight-overlay {
+            position: fixed; inset: 0; background: black;
+            z-index: 25; opacity: 0; pointer-events: none;
+            transition: opacity 1.5s ease;
+        }
+        .lampara-activa {
+            opacity: 1 !important;
+            background: radial-gradient(circle at 50% -10%, rgba(255,255,255,0.08) 0%, transparent 50%), 
+                        radial-gradient(ellipse at 50% 0%, transparent 10%, rgba(0,0,0,0.96) 75%) !important;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+    </style>
+</head>
+<body>
+
+    <div id="spotlight-overlay"></div>
+
+    <div id="aurora-container">
+        <div class="aurora top"></div>
+        <div class="aurora bottom"></div>
+    </div>
+
+    <div id="loader">
+        <div style="position:relative; width:120px; height:120px; display:flex; justify-content:center; align-items:center;">
+            <div class="portal-ring"></div>
+            <img src="https://em-content.zobj.net/source/apple/391/red-heart_2764-fe0f.png" style="width:40px;">
+        </div>
+        <p style="margin-top: 30px; color: var(--rosa-soft); letter-spacing: 2px; font-size: 0.8rem;">RECOGIENDO ESTRELLAS...</p>
+    </div>
+
+    <div id="hint-msg">Mueve tu dedo ✨</div>
+
+    <div id="main-ui">
+        <div class="titulo-contenedor" id="contenedor-titulo"></div>
+        <div class="btn-group">
+            <button id="si" onclick="aceptar()">Sí</button>
+            <button id="no" ontouchstart="teleport(this)" onmouseover="teleport(this)">No</button>
+        </div>
+    </div>
+
+    <div id="final-screen">
+        <h2 id="thanks-msg">Todo cambió por ti...</h2>
+        
+        <div id="spotify-container">
+            <div class="spot-header">
+                <img src="https://cdn.russellxz.click/f844fd94.jpg" class="spot-img" alt="Camila">
+                <div class="spot-info">
+                    <h4>Todo Cambió</h4>
+                    <p>Camila • Todo Cambió</p>
+                </div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" style="width: 20px; margin-left: auto; filter: brightness(0) invert(1);">
+            </div>
+            
+            <div class="lyrics-box" id="lyrics-scroller">
+                <div id="lyrics-content">
+                    <div class="lyric-line">Todo cambió cuando te vi</div>
+                    <div class="lyric-line">De blanco y negro al color me convertí</div>
+                    <div class="lyric-line">Y fue tan fácil quererte tanto</div>
+                    <div class="lyric-line">Algo que no imaginaba...</div>
+                    <div class="lyric-line">Fue entregarte mi amor con una mirada</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="book-container">
+            <div class="book" id="myBook">
+                <div class="page" style="z-index: 5;" onclick="flipPage(this)">
+                    <div class="page-content">
+                        Doy gracias a Dios de que seas mi 14 de febrero mi amor <img src="https://em-content.zobj.net/source/apple/391/red-heart_2764-fe0f.png" class="apple-emoji"><br><br>
+                        Tal vez no nos podamos ver este día, pero según las escrituras... <img src="https://em-content.zobj.net/source/apple/391/open-book_1f4d6.png" class="apple-emoji">
+                    </div>
+                    <div class="page-number">1</div>
+                </div>
+                <div class="page" style="z-index: 4;" onclick="flipPage(this)">
+                    <div class="page-content">
+                        El amar sin tener cerca la presencia de tu amado, es una de las manifestaciones de amor más grandes <img src="https://em-content.zobj.net/source/apple/391/sparkling-heart_1f496.png" class="apple-emoji"><br><br>
+                        Porque si puedes decidir amar a esa persona a pesar de que no está cerca...
+                    </div>
+                    <div class="page-number">2</div>
+                </div>
+                <div class="page" style="z-index: 3;" onclick="flipPage(this)">
+                    <div class="page-content">
+                        Entonces cuánto más la amarás cuando esté al lado tuyo <img src="https://em-content.zobj.net/source/apple/391/smiling-face-with-halo_1f607.png" class="apple-emoji"><br><br>
+                        Por eso yo elijo amarte hoy, mañana y siempre <img src="https://em-content.zobj.net/source/apple/391/sparkling-heart_1f496.png" class="apple-emoji">
+                    </div>
+                    <div class="page-number">3</div>
+                </div>
+                <div class="page" style="z-index: 2;" onclick="flipPage(this)">
+                    <div class="page-content">
+                        En los días buenos y los días malos, en la salud y la enfermedad <img src="https://em-content.zobj.net/source/apple/391/white-heart_1f90d.png" class="apple-emoji"><br><br>
+                        Hasta que la muerte nos separe...
+                    </div>
+                    <div class="page-number">4</div>
+                </div>
+                <div class="page" style="z-index: 1;">
+                    <div class="page-content">
+                        Te amo Valentina <br>
+                        <img src="https://em-content.zobj.net/source/apple/391/smiling-face-with-hearts_1f970.png" class="apple-emoji"> 
+                        <img src="https://em-content.zobj.net/source/apple/391/red-heart_2764-fe0f.png" class="apple-emoji"> 
+                        <img src="https://em-content.zobj.net/source/apple/391/red-heart_2764-fe0f.png" class="apple-emoji"> 
+                        <img src="https://em-content.zobj.net/source/apple/391/red-heart_2764-fe0f.png" class="apple-emoji">
+                    </div>
+                    <div class="page-number">5</div>
+                </div>
+            </div>
+            <div class="tap-hint">Toca las páginas para leer...</div>
+        </div>
+    </div>
+
+    <audio id="musica" loop><source src="https://cdn.russellxz.click/89ea5a5b.oga" type="audio/ogg"></audio>
+
+    <script>
+        const body = document.body;
+        const IOS_HEART = "https://em-content.zobj.net/source/apple/391/red-heart_2764-fe0f.png";
+        const IOS_FLOWER = "https://em-content.zobj.net/source/apple/391/cherry-blossom_1f338.png";
+        let trailActive = true;
+        let isDustEnabled = false;
+
+        // --- AUDIO POOL ---
+        const teleportPool = [];
+        const poolSize = 5;
+        const teleportSrc = "https://files.catbox.moe/wcbr8d.mpga";
+
+        for (let i = 0; i < poolSize; i++) {
+            const a = new Audio(teleportSrc);
+            a.preload = "auto";
+            teleportPool.push(a);
+        }
+        let currentAudio = 0;
+
+        function setupTitulo() {
+            const container = document.getElementById('contenedor-titulo');
+            const texto = "¿Quieres ser mi 14 de febrero?";
+            texto.split("").forEach((char, i) => {
+                const span = document.createElement('span');
+                span.className = 'letra';
+                span.innerText = char === " " ? "\u00A0" : char;
+                span.style.setProperty('--i', i);
+                container.appendChild(span);
+            });
+        }
+        setupTitulo();
+
+        function createSparkles() {
+            const container = document.getElementById('aurora-container');
+            for(let i = 0; i < 20; i++) {
+                const s = document.createElement('div');
+                s.className = 'sparkle';
+                const size = Math.random() * 4 + 2;
+                s.style.width = size + 'px';
+                s.style.height = size + 'px';
+                s.style.left = Math.random() * 100 + 'vw';
+                s.style.top = Math.random() > 0.5 ? (Math.random() * 20 + 'vh') : (Math.random() * 20 + 75 + 'vh');
+                s.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                container.appendChild(s);
+            }
+        }
+        createSparkles();
+
+        // PARTÍCULAS DE POLVO ADAPTADAS A LA LÁMPARA
+        function spawnDust() {
+            if (!isDustEnabled) return;
+            const p = document.createElement('div');
+            p.className = 'dust-particle';
+            const size = Math.random() * 3 + 1;
+            p.style.width = size + 'px'; p.style.height = size + 'px';
+            
+            // Posicionadas cerca de la base del reproductor/libro
+            const centerX = window.innerWidth / 2;
+            p.style.left = (centerX + (Math.random() * 300 - 150)) + 'px';
+            
+            p.style.setProperty('--d', (Math.random() * 4 + 4) + 's');
+            p.style.setProperty('--rx', (Math.random() * 100 - 50) + 'px');
+            body.appendChild(p);
+            setTimeout(() => p.remove(), 7000);
+        }
+
+        function createTrail(x, y) {
+            if (!trailActive) return;
+            const t = document.createElement('img');
+            t.src = IOS_HEART;
+            t.className = 'heart-trail';
+            t.style.left = x + 'px'; t.style.top = y + 'px';
+            body.appendChild(t);
+            setTimeout(() => t.remove(), 900);
+        }
+        window.addEventListener('mousemove', (e) => createTrail(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => createTrail(e.touches[0].clientX, e.touches[0].clientY));
+
+        function createFlower() {
+            if(!trailActive) return;
+            const f = document.createElement('div');
+            f.className = 'flower-fall';
+            f.innerHTML = `<img src="${IOS_FLOWER}" class="flower-img">`;
+            f.style.left = Math.random() * 100 + 'vw';
+            f.style.animationDuration = (Math.random() * 3 + 7) + 's'; 
+            body.appendChild(f);
+            setTimeout(() => f.remove(), 11000);
+        }
+        let flowerInterval = setInterval(createFlower, 500);
+
+        function teleport(btn) {
+            const sound = teleportPool[currentAudio];
+            sound.currentTime = 1;
+            sound.play().catch(()=>{});
+            currentAudio = (currentAudio + 1) % poolSize;
+
+            const rect = btn.getBoundingClientRect();
+            const ghost = document.createElement('div');
+            ghost.className = 'after-image';
+            ghost.innerHTML = "No";
+            ghost.style.left = rect.left + 'px';
+            ghost.style.top = rect.top + 'px';
+            body.appendChild(ghost);
+            setTimeout(() => ghost.remove(), 300);
+            
+            const pad = 100;
+            const newX = Math.max(pad, Math.min(window.innerWidth - rect.width - pad, Math.random() * window.innerWidth));
+            const newY = Math.max(pad, Math.min(window.innerHeight - rect.height - pad, Math.random() * window.innerHeight));
+            btn.style.position = 'fixed';
+            btn.style.left = newX + 'px';
+            btn.style.top = newY + 'px';
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('main-ui').style.opacity = '1';
+                    document.getElementById('hint-msg').style.opacity = '1';
+                }, 1000);
+            }, 3000);
+        });
+
+        function aceptar() {
+            trailActive = false; 
+            clearInterval(flowerInterval); 
+            document.querySelectorAll('.flower-fall').forEach(f => f.remove()); 
+            document.getElementById('hint-msg').style.display = 'none'; 
+            document.getElementById('main-ui').style.opacity = '0';
+
+            const spotlight = document.getElementById('spotlight-overlay');
+            spotlight.style.opacity = '1';
+
+            setTimeout(() => {
+                document.getElementById('main-ui').style.display = 'none';
+                document.getElementById('final-screen').style.display = 'flex';
+                spotlight.classList.add('lampara-activa');
+
+                const music = document.getElementById('musica');
+                music.currentTime = 18; 
+                music.play().catch(()=>{});
+                
+                isDustEnabled = true;
+                setInterval(spawnDust, 150);
+
+                setTimeout(() => { 
+                    document.getElementById('thanks-msg').style.opacity = '1';
+                    const spot = document.getElementById('spotify-container');
+                    spot.style.display = 'flex';
+                    setTimeout(() => {
+                        spot.style.opacity = '1';
+                        spot.style.transform = 'scale(1)';
+                        startSpotifyLyrics();
+                    }, 500);
+                }, 500);
+            }, 800);
+        }
+
+        function startSpotifyLyrics() {
+            const lines = document.querySelectorAll('.lyric-line');
+            const scroller = document.getElementById('lyrics-content');
+            const spotContainer = document.getElementById('spotify-container');
+            let current = 0;
+            const tempo = 5000;
+
+            const sync = setInterval(() => {
+                if(current >= lines.length) {
+                    clearInterval(sync);
+                    spotContainer.style.opacity = '0';
+                    spotContainer.style.transform = 'scale(0.9) translateY(-20px)';
+                    setTimeout(() => {
+                        spotContainer.style.display = 'none';
+                        showBook();
+                    }, 1200);
+                    return;
+                }
+                lines.forEach(l => l.classList.remove('active'));
+                lines[current].classList.add('active');
+                const offset = 75 - (current * 60); 
+                scroller.style.transform = `translateY(${offset}px)`;
+                current++;
+            }, tempo); 
+        }
+
+        function showBook() {
+            const bookCont = document.getElementById('book-container');
+            bookCont.style.display = 'block';
+            setTimeout(() => {
+                bookCont.style.opacity = '1';
+            }, 100);
+        }
+
+        function flipPage(page) {
+            page.classList.toggle('flipped');
+        }
+    </script>
+</body>
+</html>
